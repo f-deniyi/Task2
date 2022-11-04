@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+const router = express.Router()
 
 const app = express()
 
@@ -9,15 +10,45 @@ app.use(express.json({ extended: false }))
 app.use(bodyParser.json({ extended: true, limit: '30mb' }))
 const PORT = 5000
 
-app.get('/', (req, res) => {
-  const data = {
-    slackUsername: 'f3mmie',
-    backend: true,
-    age: 25,
-    bio:
-      "Hi, I’m Femi! I'm a fullstack web developer with in-depth experience creating websites that help organizations address their business challenges and meet their needs."
+app.post('/', (req, res) => {
+  console.log(JSON.stringify(req.body))
+  try {
+    const { operation_type, x, y } = req.body
+    console.log(operation_type, x, y)
+    let result
+    switch (operation_type.toLowerCase()) {
+      case 'addition':
+
+        result = x + y
+        break;
+
+      case 'subtraction':
+         result = x - y
+        break;
+
+
+      case 'multiplication':
+        console.log('multiplying')
+        console.log( x * y)
+
+         result = x * y
+        break;
+
+
+      
+    }
+    const data = {
+      slackUsername: 'f3mmie',
+      operation_type,
+      result: result
+    }
+    res.status('200').json({ data })
+  } catch (err) {
+    res.status(500).json({
+      error: 'sOMETHIG IS WORNG'
+    })
+    console.log(err)
   }
-  res.json('200', data)
 })
 
 app.listen(PORT, () => console.log(`Server Running on ${PORT}`))
